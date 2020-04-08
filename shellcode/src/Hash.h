@@ -2,7 +2,7 @@
 #include <cstdint>
 #include "CompileTime.h"
 
-#define DJB_HASH(str) EnsureCompileTime<Hash::Djb(str)>::value
+#define DJB_HASH(str) EnsureCompileTimeU<Hash::Djb(str)>::value
 
 class Hash {
  public:
