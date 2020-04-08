@@ -25,7 +25,7 @@ typedef void(__cdecl* type_draw_circle)(Vector3* position,
 
 class Draw {
  public:
-  static Initialize(LPDIRECT3DDEVICE9 d3d9_device,
+  static void Initialize(LPDIRECT3DDEVICE9 d3d9_device,
                     size_t screen_width,
                     size_t screen_height,
                     type_world_to_screen world_to_screen,

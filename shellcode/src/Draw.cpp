@@ -14,7 +14,7 @@ ID3DXLine* Draw::line_ = nullptr;
 LPD3DXFONT Draw::font_ = nullptr;
 
 // static
-Draw::Initialize(LPDIRECT3DDEVICE9 d3d9_device,
+void Draw::Initialize(LPDIRECT3DDEVICE9 d3d9_device,
                  size_t screen_width,
                  size_t screen_height,
                  type_world_to_screen world_to_screen,
