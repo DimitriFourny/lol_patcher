@@ -1,5 +1,8 @@
 
-all: out/shellcode.dll out/inj.exe
+all: out out/shellcode.dll out/inj.exe
+
+out:
+	mkdir -p out
 
 out/inj.exe:
 	cd injector && make

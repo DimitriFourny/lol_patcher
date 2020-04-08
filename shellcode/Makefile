@@ -6,9 +6,12 @@ obj = $(obj_asm) $(obj_cpp)
 gpp_flags = -m32 -fno-stack-protector -O2
 ld_flags = -mi386pe
 
-all: $(obj)
+all: out $(obj)
 	x86_64-w64-mingw32-ld $(ld_flags) -o out/shellcode.dll $(obj)
 	strip out/shellcode.dll
+
+out:
+	mkdir -p out
 
 out/%.o: src/%.cpp
 	x86_64-w64-mingw32-g++ $(gpp_flags) -c -o $@ $<

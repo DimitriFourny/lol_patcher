@@ -16,8 +16,11 @@ ld_deps = /usr/i686-w64-mingw32/lib/crt2.o \
           -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt \
           -lpsapi
  
-all: $(obj)
+all: out $(obj)
 	x86_64-w64-mingw32-ld $(ld_flags) -o out/injector.exe $(obj) $(ld_deps_dirs) $(ld_deps)
+
+out:
+	mkdir -p out
 
 out/%.o: src/%.cpp
 	x86_64-w64-mingw32-g++ $(gpp_flags) -c -o $@ $<
