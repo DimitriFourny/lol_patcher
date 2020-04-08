@@ -1,3 +1,4 @@
+mingw_lib = $(wildcard /usr/lib/gcc/i686-w64-mingw32/*-win32)
 src_cpp = $(wildcard src/*.cpp)
 obj_cpp = $(patsubst src/%.cpp,out/%.o,$(src_cpp))
 src_asm = $(wildcard src/*.asm)
@@ -5,7 +6,7 @@ obj_asm = $(patsubst src/%.asm,out/%.o,$(src_asm))
 obj = $(obj_asm) $(obj_cpp)
 gpp_flags = -m32
 ld_flags = -mi386pe
-ld_deps_dirs = -L/usr/lib/gcc/i686-w64-mingw32/7.3-win32 \
+ld_deps_dirs = -L$(mingw_lib) \
                -L/usr/i686-w64-mingw32/lib
 ld_deps = /usr/i686-w64-mingw32/lib/crt2.o \
           /usr/i686-w64-mingw32/lib/crtbegin.o \
