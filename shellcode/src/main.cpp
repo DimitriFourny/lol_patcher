@@ -1,8 +1,6 @@
 #include "main.h"
 
 #include <d3dx9core.h>
-//#include "imgui\imgui.h"
-//#include "imgui\imgui_impl_dx9.h"
 #include "GameObject.h"
 #include "Math.h"
 #include "PEHeaders.h"
