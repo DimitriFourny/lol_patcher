@@ -31,14 +31,12 @@ int main() {
 
   std::vector<char> module_dump;
   DWORD code_section_addr;
-  bool success = process->DumpCodeSectionFromModule(
-      module_base, module_size, module_dump, &code_section_addr);
+  bool success = process->DumpCodeSectionFromModule(module_base, module_size, module_dump, &code_section_addr);
   if (!success) {
     debug_printf("Failed to dump the module\n");
     return 1;
   }
-  debug_printf("Dumped a code section of 0x%x bytes from 0x%08X\n",
-               module_dump.size(), code_section_addr);
+  debug_printf("Dumped a code section of 0x%x bytes from 0x%08X\n", module_dump.size(), code_section_addr);
 
   Shellcode shellcode;
   if (!shellcode.Map()) {
@@ -54,8 +52,7 @@ int main() {
   }
 
   ExternConfig config;
-  config.fn_end_scene(
-      d3d_hook.GetMemberAddr(D3dHook::D3dVtableMembers::EndScene));
+  config.fn_end_scene(d3d_hook.GetMemberAddr(D3dHook::D3dVtableMembers::EndScene));
   config.fn_reset(d3d_hook.GetMemberAddr(D3dHook::D3dVtableMembers::Reset));
   config.kernel32(process->GetModuleBase(L"kernel32.dll"));
   config.d3d9_device(d3d_hook.d3d9_device());
@@ -84,8 +81,7 @@ int main() {
 
   DWORD new_end_scene = 0;
   DWORD new_reset = 0;
-  success = shellcode.InjectInProcess(process.get(), &config, &new_end_scene,
-                                      &new_reset);
+  success = shellcode.InjectInProcess(process.get(), &config, &new_end_scene, &new_reset);
   if (!success) {
     printf("Cannot inject the shellcode\n");
   }

@@ -1,14 +1,12 @@
 #pragma once
 
-#include <windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <windows.h>
 #include "Draw.h"
 
 typedef HRESULT(WINAPI* type_end_scene)(LPDIRECT3DDEVICE9 device);
-typedef HRESULT(WINAPI* type_reset)(
-    LPDIRECT3DDEVICE9 pDevice,
-    D3DPRESENT_PARAMETERS* pPresentationParameters);
+typedef HRESULT(WINAPI* type_reset)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
 
 class ObjectManager;
 class GameObject;

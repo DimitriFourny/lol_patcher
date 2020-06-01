@@ -6,9 +6,7 @@ Signature::Signature(std::vector<char> dump, DWORD dump_rva) {
   dump_rva_ = dump_rva;
 }
 
-const BYTE* Signature::SearchPattern(BYTE* pattern,
-                                     const char* mask,
-                                     size_t mask_len) const {
+const BYTE* Signature::SearchPattern(BYTE* pattern, const char* mask, size_t mask_len) const {
   const BYTE* data = reinterpret_cast<const BYTE*>(dump_.data());
   const BYTE* limit = data + dump_.size();
 
@@ -32,8 +30,7 @@ const BYTE* Signature::SearchPattern(BYTE* pattern,
 DWORD Signature::GetD3DDevice(const Process* process) const {
   // CreateIndexBuffer
   // A1 ? ? ? ? 33 D2 56 57 8B 7C 24 14
-  BYTE pattern[] = {0xa1, 0,    0,    0,    0,    0x33, 0xd2,
-                    0x56, 0x57, 0x8b, 0x7c, 0x24, 0x14};
+  BYTE pattern[] = {0xa1, 0, 0, 0, 0, 0x33, 0xd2, 0x56, 0x57, 0x8b, 0x7c, 0x24, 0x14};
   char mask[] = "x????xxxxxxxx";
 
   const BYTE* sig = SearchPattern(pattern, mask, _countof(mask) - 1);
@@ -44,20 +41,17 @@ DWORD Signature::GetD3DDevice(const Process* process) const {
 
   DWORD sig_offset = reinterpret_cast<const char*>(sig) - dump_.data();
   DWORD sig_addr = dump_rva_ + sig_offset;
-  debug_printf("CreateIndexBuffer pattern found at offset +0x%X (0x%08X)\n",
-               sig_offset, sig_addr);
+  debug_printf("CreateIndexBuffer pattern found at offset +0x%X (0x%08X)\n", sig_offset, sig_addr);
 
   DWORD d3d_renderer_p = 0;
-  if (!process->ReadProcMem(sig_addr + 1, &d3d_renderer_p,
-                            sizeof(d3d_renderer_p))) {
+  if (!process->ReadProcMem(sig_addr + 1, &d3d_renderer_p, sizeof(d3d_renderer_p))) {
     debug_printf("Cannot read D3D renderer pointer\n");
     return 0;
   }
   debug_printf("d3d_renderer_p = 0x%08X\n", d3d_renderer_p);
 
   DWORD d3d_renderer = 0;
-  if (!process->ReadProcMem(d3d_renderer_p, &d3d_renderer,
-                            sizeof(d3d_renderer))) {
+  if (!process->ReadProcMem(d3d_renderer_p, &d3d_renderer, sizeof(d3d_renderer))) {
     debug_printf("Cannot read D3D renderer\n");
     return 0;
   }
@@ -99,20 +93,17 @@ DWORD Signature::GetObjectsManager(const Process* process) const {
 
   DWORD sig_offset = reinterpret_cast<const char*>(sig) - dump_.data();
   DWORD sig_addr = dump_rva_ + sig_offset;
-  debug_printf("Pattern found at offset +0x%X (0x%08X)\n", sig_offset,
-               sig_addr);
+  debug_printf("Pattern found at offset +0x%X (0x%08X)\n", sig_offset, sig_addr);
 
   DWORD obj_manager_p = 0;
-  if (!process->ReadProcMem(sig_addr + 2, &obj_manager_p,
-                            sizeof(obj_manager_p))) {
+  if (!process->ReadProcMem(sig_addr + 2, &obj_manager_p, sizeof(obj_manager_p))) {
     debug_printf("Cannot read object manager pointer\n");
     return 0;
   }
   debug_printf("obj_manager_p = 0x%08X\n", obj_manager_p);
 
   DWORD object_manager = 0;
-  if (!process->ReadProcMem(obj_manager_p, &object_manager,
-                            sizeof(object_manager))) {
+  if (!process->ReadProcMem(obj_manager_p, &object_manager, sizeof(object_manager))) {
     debug_printf("Cannot read object manager renderer\n");
     return 0;
   }
@@ -135,20 +126,17 @@ DWORD Signature::GetLocalPlayer(const Process* process) const {
 
   DWORD sig_offset = reinterpret_cast<const char*>(sig) - dump_.data();
   DWORD sig_addr = dump_rva_ + sig_offset;
-  debug_printf("GetLocalPlayer: Pattern found at offset +0x%X (0x%08X)\n",
-               sig_offset, sig_addr);
+  debug_printf("GetLocalPlayer: Pattern found at offset +0x%X (0x%08X)\n", sig_offset, sig_addr);
 
   DWORD local_player_p = 0;
-  if (!process->ReadProcMem(sig_addr + 1, &local_player_p,
-                            sizeof(local_player_p))) {
+  if (!process->ReadProcMem(sig_addr + 1, &local_player_p, sizeof(local_player_p))) {
     debug_printf("Cannot read local_player_p\n");
     return 0;
   }
   debug_printf("local_player_p = 0x%08X\n", local_player_p);
 
   DWORD local_player = 0;
-  if (!process->ReadProcMem(local_player_p, &local_player,
-                            sizeof(local_player))) {
+  if (!process->ReadProcMem(local_player_p, &local_player, sizeof(local_player))) {
     debug_printf("Cannot read local_player\n");
     return 0;
   }
@@ -160,9 +148,8 @@ DWORD Signature::GetLocalPlayer(const Process* process) const {
 DWORD Signature::GetDrawCircle(const Process* process) const {
   // DrawCircle
   // 81 ec 84 00 00 00 a1 ? ? ? ? 33 c4 89 ? ? ? 00 00 00
-  BYTE pattern[] = {0x81, 0xec, 0x84, 0x00, 0x00, 0x00, 0xa1, 0x00,
-                    0x00, 0x00, 0x00, 0x33, 0xc4, 0x89, 0x84, 0x24,
-                    0x80, 0x00, 0x00, 0x00, 0xf3, 0x0f};
+  BYTE pattern[] = {0x81, 0xec, 0x84, 0x00, 0x00, 0x00, 0xa1, 0x00, 0x00, 0x00, 0x00,
+                    0x33, 0xc4, 0x89, 0x84, 0x24, 0x80, 0x00, 0x00, 0x00, 0xf3, 0x0f};
   char mask[] = "xxxxxxx????xxx???xxxxx";
 
   const BYTE* sig = SearchPattern(pattern, mask, _countof(mask) - 1);
@@ -173,8 +160,7 @@ DWORD Signature::GetDrawCircle(const Process* process) const {
 
   DWORD sig_offset = reinterpret_cast<const char*>(sig) - dump_.data();
   DWORD sig_addr = dump_rva_ + sig_offset;
-  debug_printf("GetDrawCircle: Pattern found at offset +0x%X (0x%08X)\n",
-               sig_offset, sig_addr);
+  debug_printf("GetDrawCircle: Pattern found at offset +0x%X (0x%08X)\n", sig_offset, sig_addr);
 
   return sig_addr;
 }
@@ -192,8 +178,7 @@ DWORD Signature::GetPopRet(const Process* process) const {
 
   DWORD sig_offset = reinterpret_cast<const char*>(sig) - dump_.data();
   DWORD sig_addr = dump_rva_ + sig_offset;
-  debug_printf("GetPopRet: Pattern found at offset +0x%X (0x%08X)\n",
-               sig_offset, sig_addr);
+  debug_printf("GetPopRet: Pattern found at offset +0x%X (0x%08X)\n", sig_offset, sig_addr);
 
   return sig_addr;
 }
@@ -212,8 +197,7 @@ DWORD Signature::GetGameRenderer(const Process* process) const {
 
   DWORD sig_offset = reinterpret_cast<const char*>(sig) - dump_.data();
   DWORD sig_addr = dump_rva_ + sig_offset;
-  debug_printf("GetGameRenderer: Pattern found at offset +0x%X (0x%08X)\n",
-               sig_offset, sig_addr);
+  debug_printf("GetGameRenderer: Pattern found at offset +0x%X (0x%08X)\n", sig_offset, sig_addr);
 
   DWORD value_p = 0;
   if (!process->ReadProcMem(sig_addr + 2, &value_p, sizeof(value_p))) {
@@ -233,8 +217,7 @@ DWORD Signature::GetGameRenderer(const Process* process) const {
 DWORD Signature::GetWorldToScreen(const Process* process) const {
   // GameRenderer
   // 83 EC 10 56 E8 ? ? ? ? 8B 08
-  BYTE pattern[] = {0x83, 0xec, 0x10, 0x56, 0xe8, 0x00,
-                    0x00, 0x00, 0x00, 0x8b, 0x08};
+  BYTE pattern[] = {0x83, 0xec, 0x10, 0x56, 0xe8, 0x00, 0x00, 0x00, 0x00, 0x8b, 0x08};
   char mask[] = "xxxxx????xx";
 
   const BYTE* sig = SearchPattern(pattern, mask, _countof(mask) - 1);
@@ -245,8 +228,7 @@ DWORD Signature::GetWorldToScreen(const Process* process) const {
 
   DWORD sig_offset = reinterpret_cast<const char*>(sig) - dump_.data();
   DWORD sig_addr = dump_rva_ + sig_offset;
-  debug_printf("GetWorldToScreen: Pattern found at offset +0x%X (0x%08X)\n",
-               sig_offset, sig_addr);
+  debug_printf("GetWorldToScreen: Pattern found at offset +0x%X (0x%08X)\n", sig_offset, sig_addr);
 
   return sig_addr;
 }
@@ -265,8 +247,7 @@ DWORD Signature::GetGameTime(const Process* process) const {
 
   DWORD sig_offset = reinterpret_cast<const char*>(sig) - dump_.data();
   DWORD sig_addr = dump_rva_ + sig_offset;
-  debug_printf("GetGameTime: Pattern found at offset +0x%X (0x%08X)\n",
-               sig_offset, sig_addr);
+  debug_printf("GetGameTime: Pattern found at offset +0x%X (0x%08X)\n", sig_offset, sig_addr);
 
   DWORD value_p = 0;
   if (!process->ReadProcMem(sig_addr + 4, &value_p, sizeof(value_p))) {

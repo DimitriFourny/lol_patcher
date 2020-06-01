@@ -15,31 +15,20 @@ class GameColor {
 };
 
 typedef void(__cdecl* type_world_to_screen)(Vector3* world, Vector3* screen);
-typedef void(__cdecl* type_draw_circle)(Vector3* position,
-                                        float range,
-                                        GameColor* color,
-                                        int a4,
-                                        float a5,
-                                        int a6,
-                                        float alpha);
+typedef void(
+    __cdecl* type_draw_circle)(Vector3* position, float range, GameColor* color, int a4, float a5, int a6, float alpha);
 
 class Draw {
  public:
   static void Initialize(LPDIRECT3DDEVICE9 d3d9_device,
-                    size_t screen_width,
-                    size_t screen_height,
-                    type_world_to_screen world_to_screen,
-                    type_draw_circle draw_circle);
+                         size_t screen_width,
+                         size_t screen_height,
+                         type_world_to_screen world_to_screen,
+                         type_draw_circle draw_circle);
   static bool WorldToScreen(Vector3* pos, Vector2* pos2D);
-  static void DrawLine(Vector2 start,
-                       Vector2 end,
-                       float width,
-                       bool antialias,
-                       D3DCOLOR color);
+  static void DrawLine(Vector2 start, Vector2 end, float width, bool antialias, D3DCOLOR color);
   static void DrawCircle3D(Vector3 pos, float radius, GameColor color);
-  static bool DrawText2D(Vector2 pos,
-                         const char* str,
-                         D3DCOLOR color = 0xffffffff);
+  static bool DrawText2D(Vector2 pos, const char* str, D3DCOLOR color = 0xffffffff);
   static void ResetDevice();
   static void LostDevice();
   static void Release();

@@ -1,6 +1,6 @@
 #include "PEHeaders.h"
-#include "string.h"
 #include "Hash.h"
+#include "string.h"
 
 // static
 void* PEHeaders::GetFuncAddr(void* dll, const char* function_name) {
@@ -10,25 +10,20 @@ void* PEHeaders::GetFuncAddr(void* dll, const char* function_name) {
     return nullptr;
   }
 
-  auto* nt_headers =
-      reinterpret_cast<IMAGE_NT_HEADERS32*>(base + dos_header->e_lfanew);
+  auto* nt_headers = reinterpret_cast<IMAGE_NT_HEADERS32*>(base + dos_header->e_lfanew);
   if (nt_headers->Signature != IMAGE_NT_SIGNATURE) {
     return nullptr;
   }
 
-  auto* data_directory =
-      &nt_headers->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
+  auto* data_directory = &nt_headers->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
   if (!data_directory->VirtualAddress) {
     return nullptr;
   }
 
-  auto* export_dir = reinterpret_cast<IMAGE_EXPORT_DIRECTORY*>(
-      base + data_directory->VirtualAddress);
+  auto* export_dir = reinterpret_cast<IMAGE_EXPORT_DIRECTORY*>(base + data_directory->VirtualAddress);
   auto* names = reinterpret_cast<DWORD*>(base + export_dir->AddressOfNames);
-  auto* names_ordinal =
-      reinterpret_cast<WORD*>(base + export_dir->AddressOfNameOrdinals);
-  auto* functions =
-      reinterpret_cast<DWORD*>(base + export_dir->AddressOfFunctions);
+  auto* names_ordinal = reinterpret_cast<WORD*>(base + export_dir->AddressOfNameOrdinals);
+  auto* functions = reinterpret_cast<DWORD*>(base + export_dir->AddressOfFunctions);
 
   char* name = nullptr;
   for (size_t i = 0; export_dir->NumberOfFunctions; i++) {
@@ -49,25 +44,20 @@ void* PEHeaders::GetFuncAddr(void* dll, DWORD function_hash) {
     return nullptr;
   }
 
-  auto* nt_headers =
-      reinterpret_cast<IMAGE_NT_HEADERS32*>(base + dos_header->e_lfanew);
+  auto* nt_headers = reinterpret_cast<IMAGE_NT_HEADERS32*>(base + dos_header->e_lfanew);
   if (nt_headers->Signature != IMAGE_NT_SIGNATURE) {
     return nullptr;
   }
 
-  auto* data_directory =
-      &nt_headers->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
+  auto* data_directory = &nt_headers->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
   if (!data_directory->VirtualAddress) {
     return nullptr;
   }
 
-  auto* export_dir = reinterpret_cast<IMAGE_EXPORT_DIRECTORY*>(
-      base + data_directory->VirtualAddress);
+  auto* export_dir = reinterpret_cast<IMAGE_EXPORT_DIRECTORY*>(base + data_directory->VirtualAddress);
   auto* names = reinterpret_cast<DWORD*>(base + export_dir->AddressOfNames);
-  auto* names_ordinal =
-      reinterpret_cast<WORD*>(base + export_dir->AddressOfNameOrdinals);
-  auto* functions =
-      reinterpret_cast<DWORD*>(base + export_dir->AddressOfFunctions);
+  auto* names_ordinal = reinterpret_cast<WORD*>(base + export_dir->AddressOfNameOrdinals);
+  auto* functions = reinterpret_cast<DWORD*>(base + export_dir->AddressOfFunctions);
 
   char* name = nullptr;
   for (size_t i = 0; export_dir->NumberOfFunctions; i++) {

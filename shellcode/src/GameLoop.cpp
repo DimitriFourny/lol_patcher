@@ -1,6 +1,7 @@
 #include "GameLoop.h"
 #include <windows.h>
-//#include "Draw.h"
+#include "Draw.h"
+#include "Log.h"
 
 ObjectManager* GameLoop::object_manager_ = nullptr;
 GameObject* GameLoop::local_player_ = nullptr;
@@ -22,27 +23,18 @@ void GameLoop::Update(ObjectManager* object_manager, GameObject* local_player) {
     return;
   }
 
-  GameObject** game_objects = object_manager_->objects;
+  GameObject** game_objects = object_manager_->GetFirstArrayElement();
   if (!game_objects) {
     return;
   }
 
-  size_t nb_objects = object_manager_->max_objects;
+  size_t nb_objects = object_manager_->size();
   for (size_t i = 0; i < nb_objects; i++) {
     auto obj = game_objects[i];
-    if (!obj) {
+    if (!obj || !obj->IsValid()) {
       continue;
     }
-    /*
-    Vector3* pos = obj->GetPosition();
-    Vector2 pos2D(0, 0);
-    char* name = obj->GetName()->c_str();
-    if (pos->x && pos->y && pos->z && name) {
-      if (Draw::WorldToScreen(pos, &pos2D)) {
-        Draw::DrawText2D(pos2D, name);
-      }
-    }
-    */
+
     if (obj->IsMinion()) {  // Minion
       if (!obj->GetHealth()) {
         continue;

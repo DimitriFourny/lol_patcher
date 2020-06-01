@@ -14,9 +14,7 @@ class Signature {
   DWORD GetGameTime(const Process* process) const;
 
  private:
-  const BYTE* SearchPattern(BYTE* pattern,
-                            const char* mask,
-                            size_t mask_len) const;
+  const BYTE* SearchPattern(BYTE* pattern, const char* mask, size_t mask_len) const;
 
   std::vector<char> dump_;
   DWORD dump_rva_;

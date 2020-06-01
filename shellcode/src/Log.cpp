@@ -6,10 +6,8 @@ HANDLE Log::logfile_ = nullptr;
 
 // static
 void Log::Initialize() {
-  logfile_ = WinApi::CreateFileW(L"C:\\Users\\Dimitri\\Desktop\\debug.log",
-                                 GENERIC_READ | GENERIC_WRITE,
-                                 FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-                                 CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+  logfile_ = WinApi::CreateFileW(L"C:\\Users\\Dimitri\\Desktop\\debug.log", GENERIC_READ | GENERIC_WRITE,
+                                 FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 }
 
 // static

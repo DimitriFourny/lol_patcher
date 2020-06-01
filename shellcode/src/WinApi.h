@@ -1,16 +1,15 @@
 #pragma once
-#include <windows.h>
 #include <d3dx9.h>
+#include <windows.h>
 
 typedef HMODULE(WINAPI* type_get_module_handle)(LPCSTR);
-typedef HANDLE(WINAPI* type_create_file)(
-    LPCWSTR lpFileName,
-    DWORD dwDesiredAccess,
-    DWORD dwShareMode,
-    LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-    DWORD dwCreationDisposition,
-    DWORD dwFlagsAndAttributes,
-    HANDLE hTemplateFile);
+typedef HANDLE(WINAPI* type_create_file)(LPCWSTR lpFileName,
+                                         DWORD dwDesiredAccess,
+                                         DWORD dwShareMode,
+                                         LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+                                         DWORD dwCreationDisposition,
+                                         DWORD dwFlagsAndAttributes,
+                                         HANDLE hTemplateFile);
 typedef BOOL(WINAPI* type_write_file)(HANDLE hFile,
                                       LPCVOID lpBuffer,
                                       DWORD nNumberOfBytesToWrite,
@@ -18,8 +17,7 @@ typedef BOOL(WINAPI* type_write_file)(HANDLE hFile,
                                       LPOVERLAPPED lpOverlapped);
 typedef BOOL(WINAPI* type_flush_file_buffers)(HANDLE hFile);
 typedef HRESULT(WINAPI* type_sleep)(DWORD dwMilliseconds);
-typedef HRESULT(WINAPI* type_create_line)(LPDIRECT3DDEVICE9 pDevice,
-                                          LPD3DXLINE* ppLine);
+typedef HRESULT(WINAPI* type_create_line)(LPDIRECT3DDEVICE9 pDevice, LPD3DXLINE* ppLine);
 typedef HRESULT(WINAPI* type_create_font)(_In_ LPDIRECT3DDEVICE9 pDevice,
                                           _In_ INT Height,
                                           _In_ UINT Width,

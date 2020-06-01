@@ -1,16 +1,16 @@
 #include "main.h"
 
 #include <d3dx9core.h>
-#include "GameObject.h"
-#include "Math.h"
-#include "PEHeaders.h"
-#include "string.h"
-#include "printf.h"
-#include "WinApi.h"
-#include "Log.h"
-#include "GameLoop.h"
 #include "Esp.h"
 #include "GameApi.h"
+#include "GameLoop.h"
+#include "GameObject.h"
+#include "Log.h"
+#include "Math.h"
+#include "PEHeaders.h"
+#include "WinApi.h"
+#include "printf.h"
+#include "string.h"
 
 __declspec(dllexport) ExternConfig extern_config;
 
@@ -18,8 +18,7 @@ void DrawPlayerInfo() {
   char str[1024];  // for sprintf
 
   GameObject* local_player = extern_config.local_player;
-  float screen_width =
-      static_cast<float>(extern_config.game_renderer->GetScreenWidth());
+  float screen_width = static_cast<float>(extern_config.game_renderer->GetScreenWidth());
   Vector2 text_pos(screen_width - 400, 100);
 
   sprintf(str, "%.f", *extern_config.game_time);
@@ -29,13 +28,11 @@ void DrawPlayerInfo() {
   Draw::DrawText2D(text_pos, local_player->GetName()->c_str());
   text_pos.y += 30;
 
-  sprintf(str, "Health: %.f/%.f", local_player->GetHealth(),
-          local_player->GetMaxHealth());
+  sprintf(str, "Health: %.f/%.f", local_player->GetHealth(), local_player->GetMaxHealth());
   Draw::DrawText2D(text_pos, str);
   text_pos.y += 30;
 
-  sprintf(str, "Attack + Bonus: %.f + %.f", local_player->GetBaseAtk(),
-          local_player->GetBonusAtk());
+  sprintf(str, "Attack + Bonus: %.f + %.f", local_player->GetBaseAtk(), local_player->GetBonusAtk());
   Draw::DrawText2D(text_pos, str);
   text_pos.y += 30;
 
@@ -43,26 +40,26 @@ void DrawPlayerInfo() {
   SpellSlot* spell = nullptr;
 
   spell = spellbook->GetSpellSlot(SpellBook::SpellType::SpellQ);
-  sprintf(str, "Q = %d (%s) | %.f", spell->GetLevel(),
-          spell->GetInfo()->GetName()->c_str(), spell->GetCooldownBackTime());
+  sprintf(str, "Q = %d (%s) | %.f", spell->GetLevel(), spell->GetInfo()->GetName()->c_str(),
+          spell->GetCooldownBackTime());
   Draw::DrawText2D(text_pos, str);
   text_pos.y += 30;
 
   spell = spellbook->GetSpellSlot(SpellBook::SpellType::SpellW);
-  sprintf(str, "W = %d (%s) | %.f", spell->GetLevel(),
-          spell->GetInfo()->GetName()->c_str(), spell->GetCooldownBackTime());
+  sprintf(str, "W = %d (%s) | %.f", spell->GetLevel(), spell->GetInfo()->GetName()->c_str(),
+          spell->GetCooldownBackTime());
   Draw::DrawText2D(text_pos, str);
   text_pos.y += 30;
 
   spell = spellbook->GetSpellSlot(SpellBook::SpellType::SpellE);
-  sprintf(str, "E = %d (%s) | %.f", spell->GetLevel(),
-          spell->GetInfo()->GetName()->c_str(), spell->GetCooldownBackTime());
+  sprintf(str, "E = %d (%s) | %.f", spell->GetLevel(), spell->GetInfo()->GetName()->c_str(),
+          spell->GetCooldownBackTime());
   Draw::DrawText2D(text_pos, str);
   text_pos.y += 30;
 
   spell = spellbook->GetSpellSlot(SpellBook::SpellType::SpellR);
-  sprintf(str, "R = %d (%s) | %.f", spell->GetLevel(),
-          spell->GetInfo()->GetName()->c_str(), spell->GetCooldownBackTime());
+  sprintf(str, "R = %d (%s) | %.f", spell->GetLevel(), spell->GetInfo()->GetName()->c_str(),
+          spell->GetCooldownBackTime());
   Draw::DrawText2D(text_pos, str);
   text_pos.y += 60;
 }
@@ -72,8 +69,8 @@ void Init(LPDIRECT3DDEVICE9 device) {
   Log::Initialize();
   GameApi::Initialize(extern_config.game_time);
   Draw::Initialize(device, extern_config.game_renderer->GetScreenWidth(),
-                   extern_config.game_renderer->GetScreenHeight(),
-                   extern_config.world_to_screen, extern_config.draw_circle);
+                   extern_config.game_renderer->GetScreenHeight(), extern_config.world_to_screen,
+                   extern_config.draw_circle);
 
   Log::LogStr("Injected :D\n");
   Log::LogStr("Dump the configuration:\n");
@@ -114,8 +111,7 @@ void OnEndScene(LPDIRECT3DDEVICE9 device) {
   state_block->Release();
 }
 
-HRESULT OnReset(LPDIRECT3DDEVICE9 device,
-                D3DPRESENT_PARAMETERS* pres_parameters) {
+HRESULT OnReset(LPDIRECT3DDEVICE9 device, D3DPRESENT_PARAMETERS* pres_parameters) {
   HRESULT result = extern_config.fn_reset(device, pres_parameters);
   return result;
 }
@@ -125,7 +121,6 @@ __declspec(dllexport) HRESULT WINAPI HkEndScene(LPDIRECT3DDEVICE9 device) {
   return extern_config.fn_end_scene(device);
 }
 
-__declspec(dllexport) HRESULT WINAPI
-    HkReset(LPDIRECT3DDEVICE9 device, D3DPRESENT_PARAMETERS* pres_parameters) {
+__declspec(dllexport) HRESULT WINAPI HkReset(LPDIRECT3DDEVICE9 device, D3DPRESENT_PARAMETERS* pres_parameters) {
   return OnReset(device, pres_parameters);
 }

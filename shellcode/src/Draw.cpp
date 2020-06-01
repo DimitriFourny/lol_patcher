@@ -15,10 +15,10 @@ LPD3DXFONT Draw::font_ = nullptr;
 
 // static
 void Draw::Initialize(LPDIRECT3DDEVICE9 d3d9_device,
-                 size_t screen_width,
-                 size_t screen_height,
-                 type_world_to_screen world_to_screen,
-                 type_draw_circle draw_circle) {
+                      size_t screen_width,
+                      size_t screen_height,
+                      type_world_to_screen world_to_screen,
+                      type_draw_circle draw_circle) {
   d3d9_device_ = d3d9_device;
   screen_width_ = screen_width;
   screen_height_ = screen_height;
@@ -40,8 +40,7 @@ bool Draw::WorldToScreen(Vector3* pos, Vector2* pos2D) {
   Vector3 result;
 
   auto fnWorldToScreenRop =
-      reinterpret_cast<void(__cdecl*)(type_world_to_screen, void*, Vector3*,
-                                      Vector3*)>(FakingCallRet);
+      reinterpret_cast<void(__cdecl*)(type_world_to_screen, void*, Vector3*, Vector3*)>(FakingCallRet);
 
   fnWorldToScreenRop(fnWorldToScreen_, ebp_ret_, pos, &result);
 
@@ -59,11 +58,7 @@ bool Draw::WorldToScreen(Vector3* pos, Vector2* pos2D) {
 }
 
 // static
-void Draw::DrawLine(Vector2 start,
-                    Vector2 end,
-                    float width,
-                    bool antialias,
-                    D3DCOLOR color) {
+void Draw::DrawLine(Vector2 start, Vector2 end, float width, bool antialias, D3DCOLOR color) {
   if (!line_) {
     WinApi::D3DXCreateLine(d3d9_device_, &line_);
   }
@@ -80,10 +75,9 @@ void Draw::DrawLine(Vector2 start,
 
 // static
 void Draw::DrawCircle3D(Vector3 pos, float radius, GameColor color) {
-  auto fnDrawCircleRop = reinterpret_cast<void(
-      __cdecl*)(type_draw_circle, void*, Vector3* position, float range,
-                GameColor* color, int a4, float a5, int a6, float alpha)>(
-      FakingCallRet);
+  auto fnDrawCircleRop =
+      reinterpret_cast<void(__cdecl*)(type_draw_circle, void*, Vector3* position, float range, GameColor* color, int a4,
+                                      float a5, int a6, float alpha)>(FakingCallRet);
 
   fnDrawCircleRop(fnDrawCircle_, ebp_ret_, &pos, radius, &color, 0, 0, 0, 1.f);
 }
@@ -91,10 +85,8 @@ void Draw::DrawCircle3D(Vector3 pos, float radius, GameColor color) {
 // static
 bool Draw::DrawText2D(Vector2 pos, const char* str, D3DCOLOR color) {
   if (!font_) {
-    HRESULT result = WinApi::D3DXCreateFont(
-        d3d9_device_, 24, 0, FW_NORMAL, 0, 0, DEFAULT_CHARSET,
-        OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-        L"Arial", &font_);
+    HRESULT result = WinApi::D3DXCreateFont(d3d9_device_, 24, 0, FW_NORMAL, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+                                            DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Arial", &font_);
     if (result != S_OK || !font_) {
       return false;
     }

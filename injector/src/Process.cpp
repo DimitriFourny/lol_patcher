@@ -19,22 +19,19 @@ std::unique_ptr<Process> Process::GetProcessByName(const wchar_t* target_name) {
   const DWORD nb_process = cb_needed / sizeof(*pids);
 
   for (DWORD i = 0; i < nb_process; i++) {
-    process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION |
-                              PROCESS_VM_READ | PROCESS_VM_WRITE,
-                          FALSE, pids[i]);
+    process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE, FALSE,
+                          pids[i]);
     if (!process) {
       continue;
     }
-    if (!EnumProcessModules(process, &module, sizeof(module), &cb_needed) ||
-        !cb_needed) {
+    if (!EnumProcessModules(process, &module, sizeof(module), &cb_needed) || !cb_needed) {
       CloseHandle(process);
       continue;
     }
 
     // Only the first module is interesting at the moment
     process_name[0] = '\0';
-    if (!GetModuleBaseNameW(process, module, process_name,
-                            _countof(process_name))) {
+    if (!GetModuleBaseNameW(process, module, process_name, _countof(process_name))) {
       continue;
     }
 
@@ -53,16 +50,14 @@ Process::~Process() {
   CloseHandle(process_handle_);
 }
 
-DWORD Process::GetModuleBase(const wchar_t* target_name,
-                             size_t* out_module_size) const {
+DWORD Process::GetModuleBase(const wchar_t* target_name, size_t* out_module_size) const {
   if (!process_handle_) {
     return 0;
   }
 
   HMODULE modules[1024];
   DWORD cb_needed = 0;
-  bool success =
-      EnumProcessModules(process_handle_, modules, sizeof(modules), &cb_needed);
+  bool success = EnumProcessModules(process_handle_, modules, sizeof(modules), &cb_needed);
   if (!success || !cb_needed) {
     return 0;
   }
@@ -70,15 +65,13 @@ DWORD Process::GetModuleBase(const wchar_t* target_name,
   const DWORD nb_modules = cb_needed / sizeof(modules[0]);
   wchar_t module_name[MAX_PATH] = {0};
   for (size_t i = 0; i < nb_modules; i++) {
-    if (!GetModuleBaseNameW(process_handle_, modules[i], module_name,
-                            _countof(module_name))) {
+    if (!GetModuleBaseNameW(process_handle_, modules[i], module_name, _countof(module_name))) {
       return 0;
     }
 
     if (_wcsicmp(module_name, target_name) == 0) {
       MODULEINFO modinfo;
-      if (!GetModuleInformation(process_handle_, modules[i], &modinfo,
-                                sizeof(modinfo))) {
+      if (!GetModuleInformation(process_handle_, modules[i], &modinfo, sizeof(modinfo))) {
         return 0;
       }
 
@@ -112,8 +105,7 @@ bool Process::DumpCodeSectionFromModule(DWORD module_base,
   }
 
   IMAGE_NT_HEADERS32 nt_headers;
-  if (!ReadProcMem(module_base + dos_header.e_lfanew, &nt_headers,
-                   sizeof(nt_headers))) {
+  if (!ReadProcMem(module_base + dos_header.e_lfanew, &nt_headers, sizeof(nt_headers))) {
     debug_printf("DumpCodeSectionFromModule: Can't read NT headers\n");
     return false;
   }
@@ -121,16 +113,12 @@ bool Process::DumpCodeSectionFromModule(DWORD module_base,
     debug_printf("DumpCodeSectionFromModule: Invalid NT signature\n");
     return false;
   }
-  debug_printf("Numbers of section: %d\n",
-               nt_headers.FileHeader.NumberOfSections);
+  debug_printf("Numbers of section: %d\n", nt_headers.FileHeader.NumberOfSections);
   debug_printf("Base of code: %d\n", nt_headers.OptionalHeader.BaseOfCode);
 
-  auto section_table = std::make_unique<IMAGE_SECTION_HEADER[]>(
-      nt_headers.FileHeader.NumberOfSections);
-  bool success = ReadProcMem(
-      module_base + dos_header.e_lfanew + sizeof(nt_headers),
-      section_table.get(),
-      sizeof(IMAGE_SECTION_HEADER) * nt_headers.FileHeader.NumberOfSections);
+  auto section_table = std::make_unique<IMAGE_SECTION_HEADER[]>(nt_headers.FileHeader.NumberOfSections);
+  bool success = ReadProcMem(module_base + dos_header.e_lfanew + sizeof(nt_headers), section_table.get(),
+                             sizeof(IMAGE_SECTION_HEADER) * nt_headers.FileHeader.NumberOfSections);
   if (!success) {
     debug_printf("DumpCodeSectionFromModule: Can't get the sections\n");
     return false;
@@ -138,8 +126,7 @@ bool Process::DumpCodeSectionFromModule(DWORD module_base,
 
   IMAGE_SECTION_HEADER* section_code = nullptr;
   for (size_t i = 0; i < nt_headers.FileHeader.NumberOfSections; i++) {
-    if (section_table[i].VirtualAddress ==
-        nt_headers.OptionalHeader.BaseOfCode) {
+    if (section_table[i].VirtualAddress == nt_headers.OptionalHeader.BaseOfCode) {
       section_code = &section_table[i];
     }
   }
@@ -151,8 +138,7 @@ bool Process::DumpCodeSectionFromModule(DWORD module_base,
   DWORD code_addr = module_base + section_code->VirtualAddress;
   DWORD code_size = section_code->SizeOfRawData;
   DWORD code_limit_addr = code_addr + code_size;
-  debug_printf("Section code of size 0x%x at [0x%08X - 0x%08X]\n", code_size,
-               code_addr, code_limit_addr);
+  debug_printf("Section code of size 0x%x at [0x%08X - 0x%08X]\n", code_size, code_addr, code_limit_addr);
 
   if (code_section_addr) {
     *code_section_addr = code_addr;
@@ -166,8 +152,7 @@ bool Process::DumpCodeSectionFromModule(DWORD module_base,
   DWORD allocation_size = 0;
 
   while (target_addr < code_limit_addr) {
-    if (!VirtualQueryEx(process_handle_, reinterpret_cast<LPCVOID>(target_addr),
-                        &meminfo, sizeof(meminfo))) {
+    if (!VirtualQueryEx(process_handle_, reinterpret_cast<LPCVOID>(target_addr), &meminfo, sizeof(meminfo))) {
       debug_printf("Cannot get memory info at 0x%08X", target_addr);
       return false;
     }
@@ -183,8 +168,7 @@ bool Process::DumpCodeSectionFromModule(DWORD module_base,
       memset(temp_buffer, 0, allocation_size);
     }
 
-    out_buffer.insert(out_buffer.end(), temp_buffer,
-                      temp_buffer + allocation_size);
+    out_buffer.insert(out_buffer.end(), temp_buffer, temp_buffer + allocation_size);
     delete[] temp_buffer;
     target_addr += allocation_size;
   }
@@ -192,27 +176,19 @@ bool Process::DumpCodeSectionFromModule(DWORD module_base,
   return true;
 }
 
-DWORD Process::VirtualAlloc(DWORD address,
-                            size_t size,
-                            DWORD allocation_type,
-                            DWORD protect) const {
-  void* result =
-      VirtualAllocEx(process_handle_, reinterpret_cast<LPVOID>(address), size,
-                     allocation_type, protect);
+DWORD Process::VirtualAlloc(DWORD address, size_t size, DWORD allocation_type, DWORD protect) const {
+  void* result = VirtualAllocEx(process_handle_, reinterpret_cast<LPVOID>(address), size, allocation_type, protect);
   return reinterpret_cast<DWORD>(result);
 }
 
 bool Process::VirtualProtect(DWORD addr, size_t size, DWORD new_protect) const {
   DWORD old_protect;
-  return VirtualProtectEx(process_handle_, reinterpret_cast<LPVOID>(addr), size,
-                          new_protect, &old_protect);
+  return VirtualProtectEx(process_handle_, reinterpret_cast<LPVOID>(addr), size, new_protect, &old_protect);
 }
 
 bool Process::WriteProcMem(DWORD addr, void* buffer, size_t size) const {
   SIZE_T bytes_written = 0;
-  bool success =
-      WriteProcessMemory(process_handle_, reinterpret_cast<LPVOID>(addr),
-                         buffer, size, &bytes_written);
+  bool success = WriteProcessMemory(process_handle_, reinterpret_cast<LPVOID>(addr), buffer, size, &bytes_written);
   return success && bytes_written > 0;
 }
 
@@ -225,9 +201,8 @@ bool Process::MemSet(DWORD addr, unsigned char value, size_t size) const {
 }
 
 bool Process::CreateThreadAndWait(DWORD start_addr) const {
-  HANDLE thread = CreateRemoteThread(
-      process_handle_, NULL, 0,
-      reinterpret_cast<LPTHREAD_START_ROUTINE>(start_addr), NULL, 0, NULL);
+  HANDLE thread =
+      CreateRemoteThread(process_handle_, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(start_addr), NULL, 0, NULL);
   if (thread) {
     WaitForSingleObject(thread, INFINITE);
   }

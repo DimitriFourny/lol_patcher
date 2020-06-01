@@ -73,8 +73,7 @@ size_t strlen(const char* str) {
 }
 
 void* memchr(const void* ptr, int c, size_t num) {
-  unsigned char* data =
-      const_cast<unsigned char*>(static_cast<const unsigned char*>(ptr));
+  unsigned char* data = const_cast<unsigned char*>(static_cast<const unsigned char*>(ptr));
   while (num) {
     if (*data == static_cast<unsigned char>(c)) {
       return data;

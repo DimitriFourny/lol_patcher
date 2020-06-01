@@ -1,7 +1,7 @@
 #include "Esp.h"
-#include "GameLoop.h"
 #include "Draw.h"
 #include "GameApi.h"
+#include "GameLoop.h"
 
 // static
 void Esp::DrawEspMinion() {
@@ -12,11 +12,9 @@ void Esp::DrawEspMinion() {
     }
 
     // Show only a minion ESP if its life inferior to my base attack
-    float attack_damage = GameLoop::local_player()->GetBaseAtk() +
-                          GameLoop::local_player()->GetBonusAtk();
+    float attack_damage = GameLoop::local_player()->GetBaseAtk();
     if (GameLoop::minion(i)->GetHealth() <= attack_damage) {
-      Draw::DrawCircle3D(*GameLoop::minion(i)->GetPosition(), 100.f,
-                         color_last_hit);
+      Draw::DrawCircle3D(*GameLoop::minion(i)->GetPosition(), 100.f, color_last_hit);
     }
   }
 }
@@ -43,8 +41,7 @@ void Esp::DrawEspHeroes() {
       continue;
     }
 
-    Draw::DrawCircle3D(*GameLoop::heroe(i)->GetPosition(),
-                       GameLoop::heroe(i)->GetAtkRange(), color);
+    Draw::DrawCircle3D(*GameLoop::heroe(i)->GetPosition(), GameLoop::heroe(i)->GetAtkRange(), color);
   }
 }
 
@@ -53,8 +50,7 @@ void Esp::DrawRangeEsp() {
   GameObject* local_player = GameLoop::local_player();
 
   GameColor color(128, 0, 255);
-  Draw::DrawCircle3D(*local_player->GetPosition(), local_player->GetAtkRange(),
-                     color);
+  Draw::DrawCircle3D(*local_player->GetPosition(), local_player->GetAtkRange(), color);
 }
 
 // static
@@ -65,9 +61,8 @@ void Esp::DrawEspSpells() {
   Vector2 cooldown_pos;
 
   SpellBook::SpellType spell_types[] = {
-      SpellBook::SpellType::SpellQ,  SpellBook::SpellType::SpellW,
-      SpellBook::SpellType::SpellE,  SpellBook::SpellType::SpellR,
-      SpellBook::SpellType::Summon1, SpellBook::SpellType::Summon2,
+      SpellBook::SpellType::SpellQ, SpellBook::SpellType::SpellW,  SpellBook::SpellType::SpellE,
+      SpellBook::SpellType::SpellR, SpellBook::SpellType::Summon1, SpellBook::SpellType::Summon2,
   };
   SpellBook* spellbook = nullptr;
   SpellSlot* spell_slot = nullptr;
@@ -88,8 +83,7 @@ void Esp::DrawEspSpells() {
 
     for (size_t spell = 0; spell < _countof(spell_types); spell++) {
       spell_slot = spellbook->GetSpellSlot(spell_types[spell]);
-      const int time_still = static_cast<int>(
-          spell_slot->GetCooldownBackTime() - GameApi::game_time());
+      const int time_still = static_cast<int>(spell_slot->GetCooldownBackTime() - GameApi::game_time());
 
       // Cooldown
       if (spell_slot->GetLevel() && time_still > 0) {
