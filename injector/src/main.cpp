@@ -60,6 +60,9 @@ int main() {
   config.pop_ret(signature.GetPopRet(process.get()));
   config.local_player(signature.GetLocalPlayer(process.get()));
   config.game_renderer(signature.GetGameRenderer(process.get()));
+  config.issue_order(signature.GetIssueOrder(process.get()));
+  config.cast_spell(signature.GetCastSpell(process.get()));
+  config.hud_instance(signature.GetHudInstance(process.get()));
 
   DWORD world_to_screen = signature.GetWorldToScreen(process.get());
   if (!world_to_screen) {

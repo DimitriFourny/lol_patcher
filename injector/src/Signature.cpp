@@ -257,3 +257,72 @@ DWORD Signature::GetGameTime(const Process* process) const {
 
   return value_p;
 }
+
+DWORD Signature::GetIssueOrder(const Process* process) const {
+  // IssueOrder
+  // 81 EC ? ? ? ? 56 57 8B F9 C7
+  BYTE pattern[] = {0x81, 0xec, 0, 0, 0, 0, 0x56, 0x57, 0x8b, 0xf9, 0xc7};
+  char mask[] = "xx????xxxxx";
+
+  const BYTE* sig = SearchPattern(pattern, mask, _countof(mask) - 1);
+  if (!sig) {
+    debug_printf("GetIssueOrder: Signature not found\n");
+    return 0;
+  }
+
+  DWORD sig_offset = reinterpret_cast<const char*>(sig) - dump_.data();
+  DWORD sig_addr = dump_rva_ + sig_offset;
+  debug_printf("GetIssueOrder: Pattern found at offset +0x%X (0x%08X)\n", sig_offset, sig_addr);
+
+  return sig_addr;
+}
+
+DWORD Signature::GetCastSpell(const Process* process) const {
+  // CastSpell
+  // 83 EC 38 56 8B 74 24 40
+  BYTE pattern[] = {0x83, 0xec, 0x38, 0x56, 0x8b, 0x74, 0x24, 0x40};
+  char mask[] = "xxxxxxxx";
+
+  const BYTE* sig = SearchPattern(pattern, mask, _countof(mask) - 1);
+  if (!sig) {
+    debug_printf("GetCastSpell: Signature not found\n");
+    return 0;
+  }
+
+  DWORD sig_offset = reinterpret_cast<const char*>(sig) - dump_.data();
+  DWORD sig_addr = dump_rva_ + sig_offset;
+  debug_printf("GetCastSpell: Pattern found at offset +0x%X (0x%08X)\n", sig_offset, sig_addr);
+
+  return sig_addr;
+}
+
+DWORD Signature::GetHudInstance(const Process* process) const {
+  // GameTime
+  // 8B 0D ? ? ? ? 6A 00 8B 49 34 E8 ? ? ? ? B0
+  BYTE pattern[] = {0x8B, 0x0D, 0, 0, 0, 0, 0x6A, 0x00, 0x8B, 0x49, 0x34, 0xE8, 0, 0, 0, 0, 0xB0};
+  char mask[] = "xx????xxxxxx????x";
+
+  const BYTE* sig = SearchPattern(pattern, mask, _countof(mask) - 1);
+  if (!sig) {
+    debug_printf("GetHudInstance: Signature not found\n");
+    return 0;
+  }
+
+  DWORD sig_offset = reinterpret_cast<const char*>(sig) - dump_.data();
+  DWORD sig_addr = dump_rva_ + sig_offset;
+  debug_printf("GetHudInstance: Pattern found at offset +0x%X (0x%08X)\n", sig_offset, sig_addr);
+
+  DWORD value_p = 0;
+  if (!process->ReadProcMem(sig_addr + 2, &value_p, sizeof(value_p))) {
+    debug_printf("GetHudInstance: Cannot read value pointer\n");
+    return 0;
+  }
+
+  DWORD value = 0;
+  if (!process->ReadProcMem(value_p, &value, sizeof(value))) {
+    debug_printf("GetHudInstance: Cannot read value\n");
+    return 0;
+  }
+
+  return value;
+}

@@ -11,11 +11,12 @@
 #include "WinApi.h"
 #include "printf.h"
 #include "string.h"
+#include "GameRenderer.h"
 
 __declspec(dllexport) ExternConfig extern_config;
 
 void DrawPlayerInfo() {
-  char str[1024];  // for sprintf
+  char str[2048];  // for sprintf
 
   GameObject* local_player = extern_config.local_player;
   float screen_width = static_cast<float>(extern_config.game_renderer->GetScreenWidth());
@@ -28,43 +29,25 @@ void DrawPlayerInfo() {
   Draw::DrawText2D(text_pos, local_player->GetName()->c_str());
   text_pos.y += 30;
 
-  sprintf(str, "Health: %.f/%.f", local_player->GetHealth(), local_player->GetMaxHealth());
+  MouseManager* mouse = extern_config.hud_instance->GetMouse();
+  Vector3* pos = mouse->GetPosition3D();
+  sprintf(str, "Mouse: %.f %.f %.f", pos->x, pos->y, pos->z);
   Draw::DrawText2D(text_pos, str);
   text_pos.y += 30;
 
-  sprintf(str, "Attack + Bonus: %.f + %.f", local_player->GetBaseAtk(), local_player->GetBonusAtk());
+  SpellInfo* spell = mouse->GetSpell();
+  strncpy(str, "Spell selected: ", sizeof(str)-1);
+  if (spell) {
+    strncat(str, spell->GetName()->c_str(), sizeof(str)-1);
+  } else {
+    strncat(str, "(none)", sizeof(str)-1);
+  }
   Draw::DrawText2D(text_pos, str);
   text_pos.y += 30;
-
-  SpellBook* spellbook = local_player->GetSpellBook();
-  SpellSlot* spell = nullptr;
-
-  spell = spellbook->GetSpellSlot(SpellBook::SpellType::SpellQ);
-  sprintf(str, "Q = %d (%s) | %.f", spell->GetLevel(), spell->GetInfo()->GetName()->c_str(),
-          spell->GetCooldownBackTime());
-  Draw::DrawText2D(text_pos, str);
-  text_pos.y += 30;
-
-  spell = spellbook->GetSpellSlot(SpellBook::SpellType::SpellW);
-  sprintf(str, "W = %d (%s) | %.f", spell->GetLevel(), spell->GetInfo()->GetName()->c_str(),
-          spell->GetCooldownBackTime());
-  Draw::DrawText2D(text_pos, str);
-  text_pos.y += 30;
-
-  spell = spellbook->GetSpellSlot(SpellBook::SpellType::SpellE);
-  sprintf(str, "E = %d (%s) | %.f", spell->GetLevel(), spell->GetInfo()->GetName()->c_str(),
-          spell->GetCooldownBackTime());
-  Draw::DrawText2D(text_pos, str);
-  text_pos.y += 30;
-
-  spell = spellbook->GetSpellSlot(SpellBook::SpellType::SpellR);
-  sprintf(str, "R = %d (%s) | %.f", spell->GetLevel(), spell->GetInfo()->GetName()->c_str(),
-          spell->GetCooldownBackTime());
-  Draw::DrawText2D(text_pos, str);
-  text_pos.y += 60;
 }
 
 void Init(LPDIRECT3DDEVICE9 device) {
+  // @todo: check that all the config is valid
   WinApi::Initialize(extern_config.kernel32);
   Log::Initialize();
   GameApi::Initialize(extern_config.game_time);
@@ -84,6 +67,7 @@ void Init(LPDIRECT3DDEVICE9 device) {
   Log::LogPrintf("  local_player:    0x%p\n", extern_config.local_player);
   Log::LogPrintf("  game_renderer:   0x%p\n", extern_config.game_renderer);
   Log::LogPrintf("  game_time:       0x%p\n", extern_config.game_time);
+  Log::LogPrintf("  hud_instance:    0x%p\n", extern_config.hud_instance);
   Log::LogStr("\n");
 }
 

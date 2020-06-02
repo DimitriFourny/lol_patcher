@@ -18,6 +18,9 @@ class ExternConfig {
   void world_to_screen(DWORD v) { config_.world_to_screen = v; }
   void draw_circle(DWORD v) { config_.draw_circle = v; }
   void game_time(DWORD v) { config_.game_time = v; }
+  void issue_order(DWORD v) { config_.issue_order = v; }
+  void cast_spell(DWORD v) { config_.cast_spell = v; }
+  void hud_instance(DWORD v) { config_.hud_instance = v; }
 
  private:
 #pragma pack(push)
@@ -34,6 +37,9 @@ class ExternConfig {
     DWORD world_to_screen;
     DWORD draw_circle;
     DWORD game_time;
+    DWORD issue_order;
+    DWORD cast_spell;
+    DWORD hud_instance;
   };
 #pragma pack(pop)
 

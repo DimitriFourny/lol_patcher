@@ -56,11 +56,32 @@ int memcmp(const void* ptr1, const void* ptr2, size_t num) {
 }
 
 char* strncpy(char* destination, const char* source, size_t num) {
+  while (num) {
+    *destination++ = *source;
+    num--;
+
+    if (!*source) {
+      break;
+    }
+    source++;
+  }
+  return destination;
+}
+
+char* strncat(char* destination, const char* source, size_t num) {
+  char* ret = destination;
+
+  while (*destination) {
+    destination++;
+    num--;
+  }
   while (num && *source) {
     *destination++ = *source++;
     num--;
   }
-  return destination;
+  *destination = '\x00';
+
+  return ret;
 }
 
 size_t strlen(const char* str) {

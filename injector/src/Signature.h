@@ -12,6 +12,9 @@ class Signature {
   DWORD GetGameRenderer(const Process* process) const;
   DWORD GetWorldToScreen(const Process* process) const;
   DWORD GetGameTime(const Process* process) const;
+  DWORD GetIssueOrder(const Process* process) const;
+  DWORD GetCastSpell(const Process* process) const;
+  DWORD GetHudInstance(const Process* process) const;
 
  private:
   const BYTE* SearchPattern(BYTE* pattern, const char* mask, size_t mask_len) const;
