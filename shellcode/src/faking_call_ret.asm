@@ -26,6 +26,6 @@ _FakingCallRet:
   jmp eax
 
   next:
-  mov eax, 0x41424344
+  ; mov eax, 0x41424344
   pop ebp
   ret
